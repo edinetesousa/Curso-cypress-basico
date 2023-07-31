@@ -170,7 +170,7 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         cy.get('#privacy a').should('have.attr', 'target','_blank')
     })
 
-    it.only('acessa a página da política de privacidade removendo o target e então clicando no link', () => {
+    it('acessa a página da política de privacidade removendo o target e então clicando no link', () => {
         cy.get('#privacy a')
           .invoke('removeAttr', 'target') 
           .click()
@@ -178,6 +178,7 @@ describe('Central de Atendimento ao Cliente TAT', () => {
           //dessa forma a página da política de privacidade que abriria em outra página, será exibida na mesma tela.
          
           cy.contains('Talking About Testing').should('be.visible')
+          
     })
     
 })
