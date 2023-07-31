@@ -3,7 +3,7 @@
 👋 Seja bem-vind@!
 
 Este projeto foi criado durante a minha participação no curso de Cypress básico
-
+da Escola Talking About Testing.
 ## O que  eu aprendi nesse curso
 
 - Como configurar um projeto Cypress do zero
