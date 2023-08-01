@@ -20,7 +20,7 @@ da Escola Talking About Testing.
 
 ## Pré-requisitos
  
-É necessário ter Node.js e npm instalados para executar este projeto. 
+É necessário ter o Node.js e npm instalados para executar este projeto. 
 
 > Usei as versões `v16.13.1` e `8.1.2` de Node.js e npm, respectivamente. 
 > Para escrever os testes utilizei a IDE `Visual Studio Code` (https://code.visualstudio.com/)
