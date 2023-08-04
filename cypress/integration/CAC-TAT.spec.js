@@ -1,6 +1,8 @@
 /// <reference types="Cypress" />
 
 describe('Central de Atendimento ao Cliente TAT', () => {
+    const THREE_SECONDS_IN_MS = 3000
+
     beforeEach(() => {
         cy.visit('./src/index.html')
     })
@@ -11,33 +13,49 @@ describe('Central de Atendimento ao Cliente TAT', () => {
 
     it('preenche os campos obrigatórios e envia o formulário', () => {
         const longText = 'Teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste, teste,'
+        
+        cy.clock()
         cy.get('#firstName').type('Edinete')
         cy.get('#lastName').type('Sousa')
         cy.get('#email').type('edineteb.sousa@gmail.com')
         cy.get('#open-text-area').type(longText, { delay: 0 })
         cy.contains('button', 'Enviar').click()
-        cy.get('.success').should('be.visible')    
+        cy.get('.success').should('be.visible')
+        
+        cy.tick(THREE_SECONDS_IN_MS)
+        
+        cy.get('.success').should('not.be.visible')
 
     })
 
     it('exibe mensagem de erro ao submeter o formulário com e-mail com formatação inválida', () => {
+       
+        cy.clock()
         cy.get('#firstName').type('Edinete')
         cy.get('#lastName').type('Sousa')
         cy.get('#email').type('edineteb,sousa@gmail.com,br')
         cy.get('#open-text-area').type('Teste')
         cy.contains('button', 'Enviar').click()
-
         cy.get('.error').should('be.visible')
-    
+        cy.tick(THREE_SECONDS_IN_MS)
+        
+        cy.get('.error').should('not.be.visible')
+            
     })
 
-    it('campo do telefone permanece vazio quando preenchido com dado não-numérico',() => {
+    Cypress._.times(3, () => {
+      it('campo do telefone permanece vazio quando preenchido com dado não-numérico',() => {
         cy.get('#phone')
           .type('abcdefghij')
           .should('have.value', '')
+          
+    })
+    
     })
 
     it('exibe mensagem de erro quando o telefone se torna obrigatório, mas não é preenchido antes do envio do formulário', () => {
+        
+        cy.clock()
         cy.get('#firstName').type('Edinete')
         cy.get('#lastName').type('Sousa')
         cy.get('#email').type('edineteb.sousa@gmail.com')
@@ -45,6 +63,9 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         cy.get('#open-text-area').type('Teste')
         cy.contains('button', 'Enviar').click()
         cy.get('.error').should('be.visible')
+        cy.tick(THREE_SECONDS_IN_MS)
+        
+        cy.get('.error').should('not.be.visible')
     
     })
 
@@ -73,18 +94,26 @@ describe('Central de Atendimento ao Cliente TAT', () => {
     })
 
     it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+        cy.clock()
         cy.contains('button', 'Enviar').click()
         cy.get('.error').should('be.visible') 
-    
+        cy.tick(THREE_SECONDS_IN_MS)
+        
+        cy.get('.error').should('not.be.visible')
+
     })
 
     it('envia o formuário com sucesso usando um comando customizado', () => {
+        cy.clock()
+
         cy.fillMandatoryFieldsAndSubmit()
        
         cy.get('.success').should('be.visible')   
-    
-       //Lembrar de criar o comando no arquivo 'Commands.js', na pasta support e incluir o arquivo de commands no arquivo index.js.
+        //Lembrar de criar o comando no arquivo 'Commands.js', na pasta support e incluir o arquivo de commands no arquivo index.js.
 
+        cy.tick(THREE_SECONDS_IN_MS)
+
+        cy.get('.success').should('not.be.visible')
 })
 
     it('seleciona um produto (YouTube) por seu texto', () => {
@@ -97,7 +126,6 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         cy.get('#product')
           .select('mentoria')
           .should('have.value', 'mentoria')
-
     }) 
 
     it('seleciona um produto (Blog) por seu índice', () => {
@@ -174,11 +202,26 @@ describe('Central de Atendimento ao Cliente TAT', () => {
         cy.get('#privacy a')
           .invoke('removeAttr', 'target') 
           .click()
-
           //dessa forma a página da política de privacidade que abriria em outra página, será exibida na mesma tela.
-         
-          cy.contains('Talking About Testing').should('be.visible')
+        cy.contains('Talking About Testing').should('be.visible')
           
     })
     
+    it('exibe e esconde as mensagens de sucesso e erro usando o .invoke()',() => {
+      cy.get('.success')
+        .should('not.be.visible')
+        .invoke('show')
+        .should('be.visible')
+        .and('contain', 'Mensagem enviada com sucesso.')
+        .invoke('hide')
+        .should('not.be.visible')
+      cy.get('.error')
+        .should('not.be.visible')
+        .invoke('show')
+        .should('be.visible')
+        .and('contain', 'Valide os campos obrigatórios!')
+        .invoke('hide')
+        .should('not.be.visible')
+
+    })
 })
