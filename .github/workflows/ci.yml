@@ -1,65 +1,12 @@
 name: End-to-end tests 🧪
-on:
-  workflow_dispatch: 
-    inputs:
-      cli:
-        description: Run Cypress
-        default: npx cypress run --browser chrome --config video=false --env allure=true
-
+on: [push]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-
+  cypress-run:
+    runs-on: ubuntu-20.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Set up environment
-        run: echo "LANG=pt_BR.UTF-8" >> $GITHUB_ENV
-
-      - name: Clean and create consolidated directory
-        run: |
-          rm -rf allure-results
-          mkdir -p allure-results
-          mkdir -p allure-report
-          mkdir -p history
-          ls
-
-      - name: Install dependencies
-        run: |
-          npm install
-          npm install --save-dev allure-cypress
-          npm install -g allure-commandline --save-dev
-
-      - name: Run E2E tests
-        run: npm test
-
-      - name: Generate Allure report
-        run: npm run allure:generate
-
-      - name: Merge Allure Results
-        run: |
-          for dir in history/allure-report-*; do
-            if [ -d "$dir" ]; then
-              echo "Merging results from: $dir"
-              cp -r "$dir"/* allure-results/
-            fi
-          done
-
-      - name: Generate Allure Report
-        run: allure generate allure-results -o allure-report
-
-      - name: List Allure Report Directory
-        run: ls -R allure-report
-
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-report
-          path: allure-report
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
